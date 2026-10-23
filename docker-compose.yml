@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./checkpoints:/app/checkpoints
+      - ./output:/app/output
+      - ./logs:/app/logs
+    environment:
+      - AURAG_DEVICE=cpu
+      - AURAG_DEBUG=0
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: python -m root.worker --poll 2.0
+    volumes:
+      - ./data:/app/data
+      - ./checkpoints:/app/checkpoints
+      - ./output:/app/output
+      - ./logs:/app/logs
+    environment:
+      - AURAG_DEVICE=cpu
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  ui:
+    build: .
+    command: streamlit run ui/latent_ui.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./checkpoints:/app/checkpoints
+      - ./output:/app/output
+    depends_on:
+      - api
+    restart: unless-stopped

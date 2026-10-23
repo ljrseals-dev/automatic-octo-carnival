@@ -1,0 +1,23 @@
+groups:
+  - name: aura_g
+    rules:
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(aura_g_latency_seconds_bucket[5m])) > 2
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "AURA-G P95 latency above 2 s"
+
+      - alert: HighErrorRate
+        expr: rate(aura_g_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "AURA-G error rate above 5%"
+
+      - alert: ModelNotLoaded
+        expr: aura_g_model_loaded == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: "AURA-G model failed to load"

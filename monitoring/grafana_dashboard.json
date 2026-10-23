@@ -1,0 +1,25 @@
+{
+  "title": "AURA-G Overview",
+  "panels": [
+    {
+      "title": "Requests / sec",
+      "type": "graph",
+      "targets": [{ "expr": "rate(aura_g_requests_total[1m])" }]
+    },
+    {
+      "title": "P95 Latency",
+      "type": "graph",
+      "targets": [{ "expr": "histogram_quantile(0.95, rate(aura_g_latency_seconds_bucket[5m]))" }]
+    },
+    {
+      "title": "Events Detected",
+      "type": "stat",
+      "targets": [{ "expr": "aura_g_events_total" }]
+    },
+    {
+      "title": "Active Requests",
+      "type": "gauge",
+      "targets": [{ "expr": "aura_g_active_requests" }]
+    }
+  ]
+}
